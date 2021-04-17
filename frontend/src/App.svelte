@@ -20,7 +20,7 @@
 
 <main>
 <!--    <button on:click={_ => ws.send('Hello')}>Send</button>-->
-  {#each [...Array(10).keys()] as el}
+  {#each [...Array(1).keys()] as el}
     <Card number={el + 1}/>
   {/each}
 </main>

@@ -5,20 +5,29 @@
   import Pie from './PieChart.svelte';
   import Num from './NumChart.svelte';
   import Modal from './Modal.svelte';
+  import BigLineChart from 'BigLineChart.svelte';
 
   export let number = 1;
   let alarm = false;
   let settings = false;
-  let info = false;
+  let info = true;
 
   let trustSpeed = 4, trustArea = 11, trustLive = 7;
 </script>
 
 <Modal bind:open={info}>
-  <div clas="modal-box">
-    <video class="model-video" width="1200" autoplay muted="muted" loop>
-      <source src="{url}/video" type="video/mp4"/>
-    </video>
+  <div class="modal-box">
+    <div class="modal-video-box">
+      <h1>Камера №{number}</h1>
+      <video class="modal-video" width="1200" autoplay muted="muted" loop>
+        <source src="{url}/video" type="video/mp4"/>
+      </video>
+    </div>
+    <div class="modal-charts">
+      <BigLineChart name="Скорость"/>
+      <BigLineChart name="Площадь"/>
+      <BigLineChart name="Живучесть"/>
+    </div>
   </div>
 </Modal>
 
@@ -63,6 +72,28 @@
 <style>
   img {
     width: 15px;
+  }
+
+  h1 {
+    color: #333333;
+    margin-top: 0;
+  }
+  .modal-video-box {
+    margin-top: 30px;
+  }
+
+  .modal-box {
+    display: flex;
+    width: 1200px;
+    height: 700px;
+    justify-content: space-evenly;
+    margin-right: 20px;
+  }
+
+  .modal-charts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .active-button {
@@ -133,7 +164,7 @@
     border: 7px solid #666666;
   }
 
-  .model-video {
+  .modal-video {
     width: 600px;
   }
 

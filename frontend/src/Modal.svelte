@@ -36,9 +36,6 @@
     justify-content: center;
   }
   .window {
-    width: 40%;
-    min-width: 300px;
-    max-width: 600px;
     padding-bottom: 20px;
     background: #eae8e9;
     display: flex;
