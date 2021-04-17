@@ -4,17 +4,27 @@
   import Line from './LineChart.svelte';
   import Pie from './PieChart.svelte';
   import Num from './NumChart.svelte';
-  import {fade} from 'svelte/transition';
+  import Modal from './Modal.svelte';
 
   export let number = 1;
   let alarm = false;
   let settings = false;
+  let info = false;
 
   let trustSpeed = 4, trustArea = 11, trustLive = 7;
 </script>
 
+<Modal bind:open={info}>
+  <div clas="modal-box">
+    <video class="model-video" width="1200" autoplay muted="muted" loop>
+      <source src="{url}/video" type="video/mp4"/>
+    </video>
+  </div>
+</Modal>
+
+
 <div class="component">
-  <video class:red-border={alarm} width="1200" autoplay muted="muted" loop>
+  <video class="outer-video" class:red-border={alarm} width="1200" autoplay muted="muted" loop>
     <source src="{url}/video" type="video/mp4"/>
   </video>
   <div class="top-row">
@@ -24,7 +34,7 @@
       <button class:active-button={settings} on:click={_ => settings = !settings}>
         <img src="icons/settings.svg" alt="settings">
       </button>
-      <button>
+      <button on:click={_ => info = true}>
         <img src="icons/information.svg" alt="info">
       </button>
     </div>
@@ -41,9 +51,9 @@
     {:else}
       {#each new Array(3) as e}
         <div class="chart-row">
-          <Line name="Скорость" status="bad"/>
+          <Line name="Скорость" status="good"/>
           <Pie status="good"/>
-          <Num status="normal"/>
+          <Num status="good"/>
         </div>
       {/each}
     {/if}
@@ -58,6 +68,7 @@
   .active-button {
     background: #cccccc;
   }
+
   button {
     margin-bottom: 0;
     display: flex;
@@ -75,6 +86,7 @@
     align-items: center;
     justify-content: space-between;
   }
+
   .button-block {
     display: flex;
     justify-content: space-between;
@@ -114,11 +126,15 @@
     border-color: red;
   }
 
-  video {
+  .outer-video {
     width: 220px;
     height: 165px;
     border-radius: 15px;
     border: 7px solid #666666;
+  }
+
+  .model-video {
+    width: 600px;
   }
 
   .chart-box {
