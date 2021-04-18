@@ -3,7 +3,6 @@
 
   export let status = "good";
   export let percent = 90;
-  $: console.log(percent)
   const colors = {
     good: 'rgb(34, 191, 47)',
     normal: 'rgb(245, 171, 0)',

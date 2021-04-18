@@ -27,7 +27,7 @@
   let info = false;
   // let src = `${url}/video/${name}`;
   let src = `${url}/static/raw/${name}.mp4`;
-  let srcProc = `${url}/static/raw/${name}.mp4`;
+  let srcProc = `${url}/static/processed/${name}.mp4`;
   let counter = 0;
   let trustSpeed = 230, trustArea = 1880, trustLive = 8;
   const speedScatter = 20, areaScatter = 200, liveScatter = 4;
