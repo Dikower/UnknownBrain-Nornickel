@@ -5,7 +5,8 @@
 </script>
 
 <main>
-  {#each list as el, i}
+  {#each list.slice(0, 3) as el, i}
+  <!--{#each list as el, i}-->
     <Card name={el} number={i + 1}/>
   {/each}
 </main>
