@@ -8,10 +8,27 @@
   import BigLineChart from 'BigLineChart.svelte';
 
   export let number = 1;
+  export let name = 'F1_1_3_1'
+  const ws = new WebSocket(`ws://localhost:8000/ws/${name}`);
+  let dataArea = [];
+  let dataSpeed = [];
+  let dataStability = [];
+  ws.onmessage = function (event) {
+    let content = JSON.parse(event.data);
+    let {stability, speed, area} = content;
+    dataArea = [area].concat(dataArea);
+    dataSpeed = [speed].concat(dataSpeed);
+    dataStability = [stability].concat(dataStability);
+  }
+  $: dataLst = [
+    {name: "Скорость", data: dataSpeed},
+    {name: "Площадь", data: dataArea},
+    {name: "Стабильность", data: dataStability},
+  ]
   let alarm = false;
   let settings = false;
-  let info = true;
-
+  let info = false;
+  let src = `${url}/video/${name}/`;
   let trustSpeed = 4, trustArea = 11, trustLive = 7;
 </script>
 
@@ -20,13 +37,13 @@
     <div class="modal-video-box">
       <h1>Камера №{number}</h1>
       <video class="modal-video" width="1200" autoplay muted="muted" loop>
-        <source src="{url}/video" type="video/mp4"/>
+        <source {src} type="video/mp4"/>
       </video>
     </div>
     <div class="modal-charts">
-      <BigLineChart name="Скорость"/>
-      <BigLineChart name="Площадь"/>
-      <BigLineChart name="Живучесть"/>
+      {#each dataLst as {data, name}}
+        <BigLineChart {data} {name}/>
+      {/each}
     </div>
   </div>
 </Modal>
@@ -34,7 +51,7 @@
 
 <div class="component">
   <video class="outer-video" class:red-border={alarm} width="1200" autoplay muted="muted" loop>
-    <source src="{url}/video" type="video/mp4"/>
+    <source {src} type="video/mp4"/>
   </video>
   <div class="top-row">
     <p class="number">№{number}</p>
@@ -58,9 +75,9 @@
       </div>
 
     {:else}
-      {#each new Array(3) as e}
+      {#each dataLst as {name, data}}
         <div class="chart-row">
-          <Line name="Скорость" status="good"/>
+          <Line {data} {name} status="good"/>
           <Pie status="good"/>
           <Num status="good"/>
         </div>
@@ -78,6 +95,7 @@
     color: #333333;
     margin-top: 0;
   }
+
   .modal-video-box {
     margin-top: 30px;
   }

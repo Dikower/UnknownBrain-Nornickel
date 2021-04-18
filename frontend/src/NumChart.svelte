@@ -1,7 +1,7 @@
 <script>
-  export let data = "2 cm/s";
+  export let data = "2";
   export let status = "good";
-
+  export let measure = "cm/s"
   const colors = {
     good: {backgroundColor: 'rgba(43, 192, 22, 0.2)', borderColor: 'rgb(43, 192, 22)'},
     normal: {backgroundColor: 'rgb(249, 220, 92, 0.2)', borderColor: 'rgb(249, 220, 92)'},
@@ -11,7 +11,7 @@
 <div style="
   --backgroundColor: {colors[status].backgroundColor};
   --borderColor: {colors[status].borderColor}">
-  <p>{data}</p>
+  <p>{data} {measure}</p>
 </div>
 <style>
   div {

@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from fastapi import FastAPI
 from fastapi import Request, Response, WebSocket
@@ -5,7 +6,7 @@ from fastapi.responses import StreamingResponse, HTMLResponse
 from fastapi import Header
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
-
+import asyncio
 import uvicorn
 
 
@@ -46,7 +47,7 @@ html = """
         <ul id='messages'>
         </ul>
         <script>
-            var ws = new WebSocket("ws://localhost:8000/ws");
+            var ws = new WebSocket("ws://localhost:8000/ws/F1_1_3_1");
             ws.onmessage = function(event) {
                 var messages = document.getElementById('messages')
                 var message = document.createElement('li')
@@ -71,21 +72,30 @@ async def get():
     return HTMLResponse(html)
 
 
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
+@app.websocket("/ws/{path}")
+async def websocket_endpoint(path: str, websocket: WebSocket):
+    with open(f'info/{path}.json', 'r', encoding='utf8') as file:
+        data = json.load(file)
     await websocket.accept()
+    i = 0
     while True:
         # data = await websocket.receive_text()
         # await websocket.send_text(f"Message text was: {data}")
-        await websocket.send_text("hello")
+        await asyncio.sleep(1)
+        await websocket.send_json(data[i])
+        i += 1
+        if i >= len(data):
+            i = 0
 
 
-@app.get("/video")
-async def video_endpoint(Range: str = Header(None)):
+@app.get("/video/{path}/")
+async def video_endpoint(path: str, Range: str = Header(None)):
     start, end = Range.replace("bytes=", "").split("-")
     start = int(start)
     end = int(end) if end else start + CHUNK_SIZE
-    with open(video_path, "rb") as video:
+
+    # with open(f'data/{path}.mp4', "rb") as video:
+    with open(f'raw/{path}.mp4', "rb") as video:
         video.seek(start)
         data = video.read(end - start)
         filesize = str(video_path.stat().st_size)

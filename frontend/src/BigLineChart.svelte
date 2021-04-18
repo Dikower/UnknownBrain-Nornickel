@@ -11,6 +11,7 @@
     bad: {backgroundColor: 'rgb(234, 43, 31, 0.2)', borderColor: 'rgb(234, 43, 31)'}
   }
   const options = {
+    animation: false,
     legend: {
       display: false,
     },
@@ -35,22 +36,29 @@
       backgroundColor: '#1e90ff'
     }
   }
-  $: drawData = {
-    labels: ['M', 'Tu', 'W', 'Th', 'F', 'Sa', 'Su'],
-    datasets: [{
-      data: data,
-      tension: 0.0,
-      borderColor: colors[status].borderColor,
-      backgroundColor: colors[status].backgroundColor,
-      pointRadius: 3,
-      borderWidth: 2
-    }]
-  };
+  let drawData;
+  $: {
+    data = data.slice(0, 20);
+    drawData = {
+      labels: ['5s', '10s', '15s', '20s', '25s', '30s', '35s', '40s', '45s', '50s', '55s', '60s'],
+      datasets: [{
+        data: data,
+        tension: 0.0,
+        borderColor: colors[status].borderColor,
+        backgroundColor: colors[status].backgroundColor,
+        pointRadius: 3,
+        borderWidth: 2
+      }]
+    };
+  }
+
 </script>
 
 <div class="wrapper">
   <p>{name}</p>
-  <Line data={drawData} {options}/>
+  {#key data}
+    <Line data={drawData} {options}/>
+  {/key}
 </div>
 
 <style>
