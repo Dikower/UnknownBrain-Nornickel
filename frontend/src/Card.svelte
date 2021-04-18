@@ -123,8 +123,8 @@
       </video>
     </div>
     <div class="modal-charts">
-      {#each dataLst as {data, name}}
-        <BigLineChart {data} {name}/>
+      {#each dataLst as {data, name, status}}
+        <BigLineChart {data} {name} {status}/>
       {/each}
     </div>
   </div>
