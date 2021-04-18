@@ -1,13 +1,15 @@
 <script>
   import Doughnut from "svelte-chartjs/src/Doughnut.svelte"
+
   export let status = "good";
   export let percent = 90;
+  $: console.log(percent)
   const colors = {
     good: 'rgb(34, 191, 47)',
     normal: 'rgb(245, 171, 0)',
     bad: 'rgb(234, 43, 31)'
   }
-  const data = {
+  $: data = {
     datasets: [{
       label: '%',
       percent: percent,
@@ -43,6 +45,7 @@
     }
   ];
   const options = {
+    animation: false,
     maintainAspectRatio: false,
     cutoutPercentage: 85,
     rotation: Math.PI / 2,
@@ -53,9 +56,12 @@
     hover: {mode: null},
   }
 </script>
-<div class="wrapper">
-  <Doughnut {data} {plugins} {options}/>
-</div>
+
+{#key data}
+  <div class="wrapper">
+    <Doughnut {data} {plugins} {options}/>
+  </div>
+{/key}
 
 <style>
   .wrapper {

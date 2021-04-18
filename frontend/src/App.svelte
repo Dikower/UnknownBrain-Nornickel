@@ -4,27 +4,18 @@
 </script>
 
 <main>
-  {#each list.slice(0, 2) as el, i}
+  {#each list.slice(0, 1) as el, i}
     <Card name={el} number={i + 1}/>
   {/each}
 </main>
 
 <style>
   :root {
-    /*background: #888888;*/
     background: whitesmoke;
   }
 
-  /*main {*/
-  /*  display: flex;*/
-  /*  align-content: center;*/
-  /*  justify-content: center;*/
-  /*  height: 300px;*/
-  /*}*/
-
   main {
     display: grid;
-    /*grid-template-columns: repeat(5, auto);*/
     grid-template-columns: repeat(5, 264px);
     gap: 20px 10px;
     justify-content: center;
@@ -32,12 +23,5 @@
     max-width: 1440px;
     margin: 0 auto;
   }
-
-  /*h1 {*/
-  /*  color: #ff3e00;*/
-  /*  text-transform: uppercase;*/
-  /*  font-size: 4em;*/
-  /*  font-weight: 100;*/
-  /*}*/
 
 </style>

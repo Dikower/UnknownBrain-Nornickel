@@ -1,5 +1,5 @@
 <script>
-  export let data = "2";
+  export let last = "2";
   export let status = "good";
   export let measure = "cm/s"
   const colors = {
@@ -11,7 +11,7 @@
 <div style="
   --backgroundColor: {colors[status].backgroundColor};
   --borderColor: {colors[status].borderColor}">
-  <p>{data} {measure}</p>
+  <p>{last} {measure}</p>
 </div>
 <style>
   div {

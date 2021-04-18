@@ -16,20 +16,102 @@
   ws.onmessage = function (event) {
     let content = JSON.parse(event.data);
     let {stability, speed, area} = content;
+    stability *= 10;
     dataArea = [area].concat(dataArea);
     dataSpeed = [speed].concat(dataSpeed);
     dataStability = [stability].concat(dataStability);
   }
-  $: dataLst = [
-    {name: "Скорость", data: dataSpeed},
-    {name: "Площадь", data: dataArea},
-    {name: "Стабильность", data: dataStability},
-  ]
+
   let alarm = false;
   let settings = false;
   let info = false;
-  let src = `${url}/video/${name}/`;
-  let trustSpeed = 4, trustArea = 11, trustLive = 7;
+  // let src = `${url}/video/${name}`;
+  let src = `${url}/static/raw/${name}.mp4`;
+  let srcProc = `${url}/static/raw/${name}.mp4`;
+  let counter = 0;
+  let trustSpeed = 230, trustArea = 1880, trustLive = 8;
+  const speedScatter = 20, areaScatter = 200, liveScatter = 4;
+  let speedPercent = 100, areaPercent = 100, livePercent = 100;
+  let speedStatus = 'good', areaStatus = 'good', liveStatus = 'good';
+  let dataLst;
+  $: {
+    speedPercent = Math.floor(speedScatter / (Math.abs(dataSpeed[0] - trustSpeed) + 1) * 100);
+    areaPercent = Math.floor(areaScatter / (Math.abs(dataArea[0] - trustArea) + 1) * 100);
+    livePercent = Math.floor(liveScatter / (Math.abs(dataStability[0] - trustLive) + 1) * 100);
+
+    if (speedPercent > 100) {
+      speedPercent = 100;
+    }
+    if (areaPercent > 100) {
+      areaPercent = 100;
+    }
+    if (livePercent > 100) {
+      livePercent = 100;
+    }
+
+    if (speedPercent > 85) {
+      speedStatus = 'good';
+    } else if (60 < speedPercent && speedPercent < 85) {
+      speedStatus = 'normal';
+      counter++;
+    } else {
+      speedStatus = 'bad'
+      counter += 2;
+    }
+
+    if (areaPercent > 85) {
+      areaStatus = 'good';
+    } else if (60 < areaPercent && areaPercent < 85) {
+      areaStatus = 'normal';
+      counter++
+    } else {
+      areaStatus = 'bad'
+      counter += 2;
+    }
+
+    if (livePercent > 85) {
+      liveStatus = 'good';
+    } else if (60 < livePercent && livePercent < 85) {
+      liveStatus = 'normal';
+      counter++;
+    } else {
+      liveStatus = 'bad'
+      counter += 2;
+    }
+
+    if (counter >= 4) {
+      alarm = true;
+    } else {
+      alarm = false;
+    }
+    dataLst = [
+      {
+        name: "Скорость",
+        measure: "px/s",
+        data: dataSpeed,
+        status: speedStatus,
+        percent: speedPercent,
+        last: Math.floor(dataSpeed[0])
+      },
+      {
+        name: "Площадь",
+        measure: "px",
+        data: dataArea,
+        status: areaStatus,
+        percent: areaPercent,
+        last: Math.floor(dataArea[0])
+      },
+      {
+        name: "Стабильность",
+        measure: "st",
+        data: dataStability,
+        status: liveStatus,
+        percent: livePercent,
+        last: Math.floor(dataStability[0])
+      },
+    ];
+  }
+
 </script>
 
 <Modal bind:open={info}>
@@ -37,7 +119,7 @@
     <div class="modal-video-box">
       <h1>Камера №{number}</h1>
       <video class="modal-video" width="1200" autoplay muted="muted" loop>
-        <source {src} type="video/mp4"/>
+        <source src={srcProc} type="video/mp4"/>
       </video>
     </div>
     <div class="modal-charts">
@@ -50,7 +132,7 @@
 
 
 <div class="component">
-  <video class="outer-video" class:red-border={alarm} width="1200" autoplay muted="muted" loop>
+  <video class:red-border={alarm} class="outer-video" width="1200" autoplay muted="muted" loop>
     <source {src} type="video/mp4"/>
   </video>
   <div class="top-row">
@@ -68,18 +150,18 @@
   <div class="chart-box">
     {#if settings}
       <div class="settings-block">
-        <Input label="Скр." bind:value={trustSpeed}/>
-        <Input label="Плд." bind:value={trustArea}/>
-        <Input label="Жив." bind:value={trustLive}/>
+        <Input label="Скр." bind:value={trustSpeed} min={2000} max={30000}/>
+        <Input label="Плд." bind:value={trustArea} min={1800} max={2000}/>
+        <Input label="Жив." bind:value={trustLive} min={1} max={20}/>
         <button on:click={_ => settings = false}>Готово</button>
       </div>
 
     {:else}
-      {#each dataLst as {name, data}}
+      {#each dataLst as {name, data, status, percent, measure, last}}
         <div class="chart-row">
-          <Line {data} {name} status="good"/>
-          <Pie status="good"/>
-          <Num status="good"/>
+          <Line {data} {name} {status}/>
+          <Pie {status} {percent}/>
+          <Num {status} {last} {measure}/>
         </div>
       {/each}
     {/if}

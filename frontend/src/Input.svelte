@@ -1,10 +1,12 @@
 <script>
   export let value;
   export let label;
+  export let min;
+  export let max;
 </script>
 <label>
   {label}
-  <input class="slider" type="range" bind:value min="0" max="11">
+  <input class="slider" type="range" bind:value {min} {max}>
   <input class="number" type="number" bind:value>
 </label>
 
@@ -33,10 +35,9 @@
 
   .number {
     font-weight: normal;
-    width: 30px;
+    width: 50px;
     padding: 0;
-    margin: 0;
-    margin-left: 5px;
+    margin: 0 0 0 5px;
   }
 
 </style>
